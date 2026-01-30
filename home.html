@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>홈</title>
+  <style>
+    body{margin:0;font-family:system-ui;background:#f6f7f9}
+    .wrap{max-width:420px;margin:0 auto;min-height:100vh;background:#fff}
+    header{padding:16px;font-weight:800;border-bottom:1px solid #eee}
+    .p{padding:16px}
+    .card{border:1px solid #eee;border-radius:14px;padding:14px;margin-bottom:12px}
+    .btn{display:block;width:100%;padding:12px;border-radius:12px;border:0;font-weight:800;cursor:pointer}
+    .primary{background:#111;color:#fff}
+    .ghost{background:#f2f3f5}
+    .row{display:flex;gap:10px}
+    .row .btn{width:auto;flex:1}
+    .muted{color:#666;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>고려대학교 동문회 홈</header>
+    <div class="p">
+
+      <div class="card">
+        <div style="font-weight:900;font-size:16px;">바로가기 메뉴</div>
+        <p class="muted"> </p>
+
+        <div class="row">
+          <button class="btn primary" onclick="location.href='feed.html'">게시판</button>
+          <button class="btn ghost" onclick="location.href='calendar.html'">전체 일정</button>
+        </div>
+        <div style="height:10px"></div>
+        <div class="row">
+          <button class="btn ghost" onclick="location.href='meeting.html'">모임 상세/투표</button>
+          <button class="btn ghost" onclick="location.href='write.html'">글쓰기</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:800;">오늘의 공지</div>
+        <p class="muted">00학번 000의 생일이에요~</p>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

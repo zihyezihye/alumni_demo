@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>게시글</title>
+  <style>
+    body{margin:0;font-family:system-ui;background:#f6f7f9}
+    .wrap{max-width:420px;margin:0 auto;min-height:100vh;background:#fff}
+    header{padding:16px;font-weight:900;border-bottom:1px solid #eee;display:flex;gap:10px;align-items:center}
+    .back{border:0;border-radius:10px;padding:8px 10px;font-weight:900;cursor:pointer;background:#f2f3f5}
+    .p{padding:16px}
+    .card{border:1px solid #eee;border-radius:14px;padding:14px;margin-bottom:12px}
+    .muted{color:#666;font-size:13px}
+    input{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;margin-bottom:10px}
+    button{border:0;border-radius:12px;padding:12px;font-weight:900;cursor:pointer}
+    .primary{background:#111;color:#fff;width:100%}
+    .comment{border-top:1px solid #eee;padding:10px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <button class="back" onclick="location.href='feed.html'">←</button>
+      <span>게시글</span>
+    </header>
+
+    <div class="p">
+      <div id="toast" class="card" style="display:none;background:#111;color:#fff;border-color:#111">등록 완료!</div>
+
+      <div class="card">
+        <div id="title" style="font-weight:900;font-size:16px"></div>
+        <div id="meta" class="muted" style="margin-top:6px"></div>
+        <div id="body" style="margin-top:12px;white-space:pre-wrap"></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:900;margin-bottom:10px">댓글</div>
+        <input id="c_author" placeholder="작성자" value="지혜" />
+        <input id="c_body" placeholder="댓글 내용을 입력" />
+        <button class="primary" onclick="addComment()">댓글 등록</button>
+        <div style="height:12px"></div>
+        <div id="comments"></div>
+      </div>
+
+      <button style="width:100%;background:#f2f3f5" onclick="location.href='home.html'">홈</button>
+    </div>
+  </div>
+
+<script>
+  const POSTS="alumni_posts_v1";
+  const COMMENTS="alumni_comments_v1";
+
+  const params=new URLSearchParams(location.search);
+  const id=params.get("id");
+
+  if(params.get("new")==="1"){
+    const t=document.getElementById("toast");
+    t.style.display="block";
+    setTimeout(()=>t.style.display="none",1200);
+  }
+
+  function escapeHtml(s){
+    return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+  }
+
+  function getPost(){
+    const posts=JSON.parse(localStorage.getItem(POSTS)||"[]");
+    return posts.find(p=>p.id===id);
+  }
+
+  function loadComments(){
+    const all=JSON.parse(localStorage.getItem(COMMENTS)||"{}");
+    return all[id] || [];
+  }
+
+  function saveComments(list){
+    const all=JSON.parse(localStorage.getItem(COMMENTS)||"{}");
+    all[id]=list;
+    localStorage.setItem(COMMENTS, JSON.stringify(all));
+  }
+
+  function render(){
+    const post=getPost();
+    if(!post){
+      document.getElementById("title").innerText="게시글을 찾을 수 없음";
+      document.getElementById("meta").innerText="";
+      document.getElementById("body").innerText="목록으로 돌아가서 다시 선택해줘.";
+      return;
+    }
+    document.getElementById("title").innerText=post.title;
+    document.getElementById("meta").innerText=`작성자 ${post.author} · ${new Date(post.ts).toLocaleString()}`;
+    document.getElementById("body").innerText=post.body;
+
+    const comments=loadComments();
+    const el=document.getElementById("comments");
+    el.innerHTML = comments.length ? "" : `<div class="muted">아직 댓글이 없어.</div>`;
+    comments.forEach(c=>{
+      const div=document.createElement("div");
+      div.className="comment";
+      div.innerHTML = `<div style="font-weight:800">${escapeHtml(c.author)}</div>
+                       <div class="muted" style="margin-top:2px">${escapeHtml(c.body)}</div>
+                       <div class="muted" style="margin-top:4px;font-size:12px">${new Date(c.ts).toLocaleString()}</div>`;
+      el.appendChild(div);
+    });
+  }
+
+  function addComment(){
+    const author=document.getElementById("c_author").value.trim()||"익명";
+    const body=document.getElementById("c_body").value.trim();
+    if(!body){ alert("댓글 내용을 입력해줘."); return; }
+    const comments=loadComments();
+    comments.unshift({author, body, ts:Date.now()});
+    saveComments(comments);
+    document.getElementById("c_body").value="";
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>

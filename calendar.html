@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>전체 일정</title>
+  <style>
+    body{margin:0;font-family:system-ui;background:#f6f7f9}
+    .wrap{max-width:420px;margin:0 auto;min-height:100vh;background:#fff}
+    header{padding:16px;font-weight:900;border-bottom:1px solid #eee}
+    .p{padding:16px}
+    .card{border:1px solid #eee;border-radius:14px;padding:14px;margin-bottom:12px}
+    .muted{color:#666;font-size:13px}
+    input{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;margin-bottom:10px}
+    button{width:100%;border:0;border-radius:12px;padding:12px;font-weight:900;cursor:pointer;background:#111;color:#fff}
+    .item{border-top:1px solid #eee;padding:10px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>동문회 전체 일정</header>
+    <div class="p">
+      <div class="card">
+        <div style="font-weight:900">일정 추가 </div>
+        <div class="muted" style="margin-top:6px"> </div>
+        <div style="height:10px"></div>
+        <input id="date" placeholder="날짜 (예: 2026-02-10)" />
+        <input id="title" placeholder="일정명 (예: 교육학과 OBYB)" />
+        <button onclick="addEvent()">추가</button>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:900">일정 목록</div>
+        <div id="list" style="margin-top:8px"></div>
+      </div>
+
+      <button style="background:#f2f3f5;color:#111" onclick="location.href='home.html'">홈</button>
+    </div>
+  </div>
+
+<script>
+  const KEY="alumni_events_v1";
+
+  function seedIfEmpty(){
+    const cur=JSON.parse(localStorage.getItem(KEY)||"[]");
+    if(cur.length>0) return;
+    const seed=[
+      {date:"2026-02-10", title:"동문회 운영진 회의"},
+      {date:"2026-02-22", title:"후배 멘토링 데이"},
+    ];
+    localStorage.setItem(KEY, JSON.stringify(seed));
+  }
+
+  function load(){
+    seedIfEmpty();
+    return JSON.parse(localStorage.getItem(KEY)||"[]")
+      .sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  }
+
+  function save(list){
+    localStorage.setItem(KEY, JSON.stringify(list));
+  }
+
+  function render(){
+    const list=load();
+    const el=document.getElementById("list");
+    el.innerHTML = list.length ? "" : `<div class="muted">등록된 일정이 없어.</div>`;
+    list.forEach((e,idx)=>{
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div style="font-weight:900">${escapeHtml(e.title)}</div>
+        <div class="muted">${escapeHtml(e.date)}</div>
+        <div style="height:8px"></div>
+        <button style="background:#f2f3f5;color:#111" onclick="removeEvent(${idx})">삭제</button>
+      `;
+      el.appendChild(div);
+    });
+  }
+
+  function escapeHtml(s){
+    return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+  }
+
+  function addEvent(){
+    const date=document.getElementById("date").value.trim();
+    const title=document.getElementById("title").value.trim();
+    if(!date || !title){ alert("날짜/일정명 둘 다 입력해줘."); return; }
+    const list=load();
+    list.push({date,title});
+    save(list);
+    document.getElementById("date").value="";
+    document.getElementById("title").value="";
+    render();
+  }
+
+  function removeEvent(idx){
+    const list=load();
+    list.splice(idx,1);
+    save(list);
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>

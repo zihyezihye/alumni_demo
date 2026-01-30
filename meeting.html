@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>모임</title>
+  <style>
+    body{margin:0;font-family:system-ui;background:#f6f7f9}
+    .wrap{max-width:420px;margin:0 auto;min-height:100vh;background:#fff}
+    header{padding:16px;font-weight:900;border-bottom:1px solid #eee}
+    .p{padding:16px}
+    .card{border:1px solid #eee;border-radius:14px;padding:14px;margin-bottom:12px}
+    .muted{color:#666;font-size:13px}
+    .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+    button{border:0;border-radius:12px;padding:12px;font-weight:900;cursor:pointer}
+    .primary{background:#111;color:#fff}
+    .ghost{background:#f2f3f5}
+    .kpi{display:flex;gap:10px}
+    .kpi .box{flex:1;background:#f6f7f9;border-radius:12px;padding:10px;text-align:center}
+    .num{font-weight:900;font-size:18px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>모임 상세</header>
+    <div class="p">
+      <div class="card">
+        <div style="font-weight:900;font-size:16px">🎓 15학번 정기 모임</div>
+        <div class="muted" style="margin-top:6px">2026-02-01 (일) 19:00 · 안암역 근처</div>
+        <div style="margin-top:10px;white-space:pre-wrap">오랜만에 다 같이 모여서 근황 공유하자!
+회비/정산은 추후 공지.</div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:900">참여 여부 투표</div>
+        <div class="muted" style="margin-top:6px"> </div>
+
+        <div class="grid">
+          <button class="primary" onclick="vote('yes')">참석</button>
+          <button class="ghost" onclick="vote('maybe')">보류</button>
+          <button class="ghost" onclick="vote('no')">불참</button>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="kpi">
+          <div class="box"><div class="num" id="yes">0</div><div class="muted">참석</div></div>
+          <div class="box"><div class="num" id="maybe">0</div><div class="muted">보류</div></div>
+          <div class="box"><div class="num" id="no">0</div><div class="muted">불참</div></div>
+        </div>
+
+        <div class="muted" style="margin-top:10px">내 선택: <b id="mine">미선택</b></div>
+      </div>
+
+      <button style="width:100%;background:#f2f3f5" onclick="location.href='home.html'">홈</button>
+    </div>
+  </div>
+
+<script>
+  const KEY="alumni_meeting_vote_v1";
+  const MINE="alumni_meeting_mine_v1";
+
+  function load(){
+    return JSON.parse(localStorage.getItem(KEY)||'{"yes":0,"maybe":0,"no":0}');
+  }
+  function save(v){ localStorage.setItem(KEY, JSON.stringify(v)); }
+
+  function render(){
+    const v=load();
+    document.getElementById("yes").innerText=v.yes||0;
+    document.getElementById("maybe").innerText=v.maybe||0;
+    document.getElementById("no").innerText=v.no||0;
+    const mine=localStorage.getItem(MINE) || "미선택";
+    document.getElementById("mine").innerText = mine;
+  }
+
+  function vote(type){
+    const v=load();
+    const prev=localStorage.getItem(MINE);
+
+    // 이전 선택을 취소(숫자만 조정)하는 “척”
+    if(prev==="참석") v.yes=Math.max(0,(v.yes||0)-1);
+    if(prev==="보류") v.maybe=Math.max(0,(v.maybe||0)-1);
+    if(prev==="불참") v.no=Math.max(0,(v.no||0)-1);
+
+    if(type==="yes"){ v.yes=(v.yes||0)+1; localStorage.setItem(MINE,"참석"); }
+    if(type==="maybe"){ v.maybe=(v.maybe||0)+1; localStorage.setItem(MINE,"보류"); }
+    if(type==="no"){ v.no=(v.no||0)+1; localStorage.setItem(MINE,"불참"); }
+
+    save(v);
+    render();
+  }
+
+  render();
+</script>
+</body>
+</html>

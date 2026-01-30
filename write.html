@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>글쓰기</title>
+  <style>
+    body{margin:0;font-family:system-ui;background:#f6f7f9}
+    .wrap{max-width:420px;margin:0 auto;min-height:100vh;background:#fff}
+    header{padding:16px;font-weight:900;border-bottom:1px solid #eee}
+    .p{padding:16px}
+    input,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;margin-bottom:12px;font-family:inherit}
+    textarea{min-height:160px;resize:vertical}
+    button{width:100%;border:0;border-radius:12px;padding:12px;font-weight:900;cursor:pointer}
+    .primary{background:#111;color:#fff}
+    .ghost{background:#f2f3f5;margin-top:10px}
+    .muted{color:#666;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>글쓰기</header>
+    <div class="p">
+      <div class="muted"> </div>
+      <div style="height:10px"></div>
+      <input id="title" placeholder="제목" />
+      <textarea id="body" placeholder="내용"></textarea>
+      <input id="author" placeholder="작성자 (예: 지혜)" value="지혜" />
+
+      <button class="primary" onclick="submitPost()">등록</button>
+      <button class="ghost" onclick="location.href='feed.html'">취소</button>
+    </div>
+  </div>
+
+<script>
+  const KEY="alumni_posts_v1";
+
+  function submitPost(){
+    const title=document.getElementById("title").value.trim();
+    const body=document.getElementById("body").value.trim();
+    const author=document.getElementById("author").value.trim() || "익명";
+    if(!title || !body){
+      alert("제목/내용은 필수야.");
+      return;
+    }
+    const posts=JSON.parse(localStorage.getItem(KEY)||"[]");
+    const id=String(Date.now());
+    posts.push({id,title,body,author,ts:Date.now()});
+    localStorage.setItem(KEY, JSON.stringify(posts));
+    location.href=`post.html?id=${encodeURIComponent(id)}&new=1`;
+  }
+</script>
+</body>
+</html>

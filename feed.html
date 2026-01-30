@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>게시판</title>
+  <style>
+    body{margin:0;font-family:system-ui;background:#f6f7f9}
+    .wrap{max-width:420px;margin:0 auto;min-height:100vh;background:#fff}
+    header{padding:16px;font-weight:900;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+    .p{padding:16px}
+    .card{border:1px solid #eee;border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer}
+    .muted{color:#666;font-size:13px}
+    .chip{display:inline-block;background:#f2f3f5;padding:4px 8px;border-radius:999px;font-size:12px}
+    button{border:0;border-radius:12px;padding:10px 12px;font-weight:800;cursor:pointer}
+    .primary{background:#111;color:#fff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span>게시판</span>
+      <button class="primary" onclick="location.href='write.html'">글쓰기</button>
+    </header>
+
+    <div class="p">
+      <div class="muted" style="margin-bottom:10px;"> </div>
+      <div id="list"></div>
+      <button style="width:100%;margin-top:8px" onclick="location.href='home.html'">홈으로</button>
+    </div>
+  </div>
+
+<script>
+  const KEY="alumni_posts_v1";
+
+  function seedIfEmpty(){
+    const cur = JSON.parse(localStorage.getItem(KEY)||"[]");
+    if(cur.length>0) return;
+    const seed = [
+      {id:String(Date.now()-300000), title:"정기 모임 공지", body:"이번 주 토요일 7시 강남에서 보자!", author:"운영진", ts:Date.now()-300000},
+      {id:String(Date.now()-200000), title:"취업/이직 정보 공유해요", body:"최근 면접 후기나 추천 기업 있으면 공유 좀", author:"밍쨩", ts:Date.now()-200000},
+      {id:String(Date.now()-100000), title:"학교 근처 맛집 추천", body:"졸업 후 오랜만에 가려는데 맛집 리스트 있을까?", author:"퉁퉁이", ts:Date.now()-100000},
+    ];
+    localStorage.setItem(KEY, JSON.stringify(seed));
+  }
+
+  function load(){
+    seedIfEmpty();
+    return JSON.parse(localStorage.getItem(KEY)||"[]").sort((a,b)=>b.ts-a.ts);
+  }
+
+  function render(){
+    const posts=load();
+    const el=document.getElementById("list");
+    el.innerHTML="";
+    posts.forEach(p=>{
+      const card=document.createElement("div");
+      card.className="card";
+      card.onclick=()=>location.href=`post.html?id=${encodeURIComponent(p.id)}`;
+      card.innerHTML=`
+        <div class="chip">자유게시판</div>
+        <div style="font-weight:900;font-size:15px;margin-top:8px">${escapeHtml(p.title)}</div>
+        <div class="muted" style="margin-top:6px">${escapeHtml(p.body).slice(0,60)}${p.body.length>60?"...":""}</div>
+        <div class="muted" style="margin-top:8px">작성자 ${escapeHtml(p.author)} · ${new Date(p.ts).toLocaleString()}</div>
+      `;
+      el.appendChild(card);
+    });
+  }
+
+  function escapeHtml(s){
+    return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+  }
+
+  render();
+</script>
+</body>
+</html>

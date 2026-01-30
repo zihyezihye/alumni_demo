@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>고려대학교 교육학과 커뮤니티</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:0; background:#f6f7f9; }
+    .wrap { max-width:420px; margin:0 auto; min-height:100vh; background:#fff; }
+    header { padding:18px 16px; border-bottom:1px solid #eee; font-weight:700; }
+    .p { padding:16px; }
+    .card { background:#fff; border:1px solid #eee; border-radius:14px; padding:14px; margin:12px 0; box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
+    .btn { display:block; width:100%; border:0; border-radius:12px; padding:12px 14px; font-weight:700; cursor:pointer; }
+    .btn.primary { background:#111; color:#fff; }
+    .btn.ghost { background:#f2f3f5; }
+    .muted { color:#666; font-size:13px; line-height:1.4; }
+    input { width:100%; padding:12px 12px; border-radius:12px; border:1px solid #ddd; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>고려대학교 교육학과 커뮤니티</header>
+
+    <div class="p">
+      <div class="card">
+        <div style="font-weight:800; font-size:18px;">동문 인증하고 모임/게시글을 확인해봐</div>
+        <div class="muted" style="margin-top:6px;"> </div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:8px;">이메일</div>
+        <input placeholder="example@school.ac.kr" />
+        <div style="height:10px;"></div>
+        <div style="font-weight:700; margin-bottom:8px;">비밀번호</div>
+        <input placeholder="********" type="password" />
+        <div style="height:12px;"></div>
+
+        <button class="btn primary" onclick="location.href='home.html'">로그인</button>
+        <div style="height:10px;"></div>
+        <button class="btn ghost" onclick="location.href='signup.html'">회원가입</button>
+      </div>
+
+      <div class="muted">링크 공유로 바로 시연 가능합니다.</div>
+    </div>
+  </div>
+</body>
+</html>
